@@ -15,7 +15,7 @@ class SauceDemoLoginPage(ElementUtil):
         self.password = (AppiumBy.ACCESSIBILITY_ID, "test-Password")
         self.login_button = (AppiumBy.ACCESSIBILITY_ID, "test-LOGIN")
 
-    def enter_username(self):
+    def enter_username(self, username):
         """
         Enter the username into the username input field.
 
@@ -26,10 +26,10 @@ class SauceDemoLoginPage(ElementUtil):
             None: This method does not return a value.
         """
         self.wait_for_element(*self.username)
-        self.driver.find_element(*self.username).send_keys("standard_user")
-        logging.info("Entered username: standard_user")
+        self.send_keys_to_element(self.username, username)
+        logging.info(f"Entered username: {username}")
 
-    def enter_password(self):
+    def enter_password(self, password):
         """
         Enter the password into the password input field.
 
@@ -39,8 +39,7 @@ class SauceDemoLoginPage(ElementUtil):
         Returns:
             None: This method does not return a value.
         """
-        self.wait_for_element(*self.password)
-        self.driver.find_element(*self.password).send_keys("secret_sauce")
+        self.send_keys_to_element(self.password, password)
         logging.info("Entered password.")
 
     def click_on_login_button(self):
@@ -52,10 +51,10 @@ class SauceDemoLoginPage(ElementUtil):
         Returns:
             None: This method does not return a value.
         """
-        self.driver.find_element(*self.login_button).click()
+        self.click_on_element(self.login_button)
         logging.info("Clicked on the login button.")
 
-    def do_login(self):
+    def do_login(self, username, password):
         """
         Perform the complete login process.
 
@@ -66,7 +65,7 @@ class SauceDemoLoginPage(ElementUtil):
             None: This method does not return a value.
         """
         logging.info("Performing login.")
-        self.enter_username()
-        self.enter_password()
+        self.enter_username(username)
+        self.enter_password(password)
         self.click_on_login_button()
         logging.info("Login action completed.")

@@ -16,6 +16,11 @@ class SauceDemoPlpPage(ElementUtil):
         self.add_to_cart = (AppiumBy.XPATH, "(//android.widget.TextView[@text='ADD TO CART'])")
         self.cart_icon = (AppiumBy.XPATH, "//android.view.ViewGroup[@content-desc='test-Cart']")
         self.cart_count = (AppiumBy.XPATH, "//android.widget.TextView")
+        self.add_to_cart_drag_zone = (AppiumBy.XPATH, "(//android.view.ViewGroup[@content-desc='test-Drag Handle'])[2]")
+        self.add_to_cart_drop_zone = (AppiumBy.ACCESSIBILITY_ID, "test-Cart drop zone")
+        self.burger_menu = (AppiumBy.XPATH,
+                            "//android.view.ViewGroup[@content-desc='test-Menu']/android.view.ViewGroup/android.widget.ImageView")
+        self.logout_button = (AppiumBy.ACCESSIBILITY_ID, "test-LOGOUT")
 
     def validate_presence_of_first_product(self):
         """
@@ -39,8 +44,8 @@ class SauceDemoPlpPage(ElementUtil):
             None: This method does not return a value.
         """
         logging.info("Adding product to cart.")
-        self.wait_for_element(*self.add_to_cart)
-        self.driver.find_element(*self.add_to_cart).click()
+        # self.wait_for_element(*self.add_to_cart)
+        self.click_on_element(self.add_to_cart)
         logging.info("Product added to cart.")
 
     def get_cart_count(self):
@@ -54,9 +59,18 @@ class SauceDemoPlpPage(ElementUtil):
         """
         logging.info("Retrieving cart count.")
         self.wait_for_element(*self.cart_count)
-        count = self.driver.find_element(*self.cart_count).text
+        count = self.get_text_of_element(self.cart_count)
         logging.info(f"Current cart count: {count}")
         return count
 
     def click_on_mini_cart(self):
-        self.driver.find_element(*self.cart_icon).click()
+        self.click_on_element(self.cart_icon)
+
+    def add_product_by_dragging_to_cart(self):
+        self.wait_for_element(*self.add_to_cart_drag_zone)
+        self.drag_and_drop(self.add_to_cart_drag_zone, self.add_to_cart_drop_zone)
+
+    def do_logout(self):
+        self.click_on_element(self.burger_menu)
+        self.wait_for_element(*self.logout_button)
+        self.click_on_element(self.logout_button)
