@@ -2,8 +2,6 @@
 
 ### Author: Vinutha
 
-Welcome to the **Simple Book API Testing** repository! This project provides a robust framework for testing a simple book API, utilizing modern tools and best practices in software development.
-
 ---
 
 ## 📚 Tech Stack
