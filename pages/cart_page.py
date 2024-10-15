@@ -14,4 +14,4 @@ class SauceDemoCartPage(ElementUtil):
 
     def click_on_checkout_button(self):
         self.wait_for_element(*self.checkout_button)
-        self.driver.find_element(*self.checkout_button).click()
+        self.click_on_element(self.checkout_button)

@@ -18,18 +18,18 @@ class SauceDemoCheckoutPage(ElementUtil):
         self.continue_button = (AppiumBy.ACCESSIBILITY_ID, "test-CONTINUE")
         self.finish_button = (AppiumBy.ACCESSIBILITY_ID, "test-FINISH")
 
-    def enter_first_name(self):
+    def enter_first_name(self, firstname):
         self.wait_for_element(*self.first_name)
-        self.driver.find_element(*self.first_name).send_keys("automation")
+        self.send_keys_to_element(self.first_name, firstname)
 
-    def enter_last_name(self):
-        self.driver.find_element(*self.last_name).send_keys("user")
+    def enter_last_name(self, lastname):
+        self.send_keys_to_element(self.last_name, lastname)
 
-    def enter_postal_code(self):
-        self.driver.find_element(*self.postal_code).send_keys("12345")
+    def enter_postal_code(self, postalcode):
+        self.send_keys_to_element(self.postal_code, postalcode)
 
     def click_on_continue_button(self):
-        self.driver.find_element(*self.continue_button).click()
+        self.click_on_element(self.continue_button)
 
     def click_on_finish_button(self):
         resource_id_to_scroll_to = "test-FINISH"

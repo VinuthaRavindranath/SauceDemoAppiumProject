@@ -1,5 +1,6 @@
 import pytest
 from conftest import appium_driver, logger
+from constants import AppConstants
 from pages import (
     SauceDemoLoginPage,
     SauceDemoPlpPage,
@@ -27,15 +28,8 @@ class TestCheckout:
         """Test the functionality of adding a product to the cart and completing the checkout process."""
         logger.info("Starting test: test_checkout")
 
-        # Log in to the application
-        self.login_page.enter_username()  # Input username
-        logger.info("Username entered.")
-
-        self.login_page.enter_password()  # Input password
-        logger.info("Password entered.")
-
-        self.login_page.click_on_login_button()  # Click the login button
-        logger.info("Login button clicked.")
+        # Perform login
+        self.login_page.do_login(AppConstants.STANDARD_USER, AppConstants.STANDARD_PASSWORD)
 
         # Add a product to the cart
         self.plp_page.add_product_to_cart()  # Add a product from the product list page
@@ -48,9 +42,9 @@ class TestCheckout:
         self.cart_page.click_on_checkout_button()  # Click the checkout button
 
         # Fill out the checkout information
-        self.checkout_page.enter_first_name()  # Enter first name
-        self.checkout_page.enter_last_name()  # Enter last name
-        self.checkout_page.enter_postal_code()  # Enter postal code
+        self.checkout_page.enter_first_name(AppConstants.FIRST_NAME)  # Enter first name
+        self.checkout_page.enter_last_name(AppConstants.LAST_NAME)  # Enter last name
+        self.checkout_page.enter_postal_code(AppConstants.POSTAL_CODE)  # Enter postal code
         self.checkout_page.click_on_continue_button()  # Click continue to proceed
 
         # Complete the checkout process

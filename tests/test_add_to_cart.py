@@ -1,9 +1,12 @@
+import time
+
 import pytest
 from conftest import appium_driver, logger
 from pages import (
     SauceDemoLoginPage,
     SauceDemoPlpPage
 )
+from constants import AppConstants
 
 
 class TestAddToCart:
@@ -19,20 +22,29 @@ class TestAddToCart:
         """Test the functionality of adding a product to the cart."""
         logger.info("Starting test: test_add_to_cart")
 
-        # Enter username and password to log in
-        self.login_page.enter_username()
-        logger.info("Username entered.")
-
-        self.login_page.enter_password()
-        logger.info("Password entered.")
-
-        self.login_page.click_on_login_button()
-        logger.info("Login button clicked.")
+        # Perform login
+        self.login_page.do_login(AppConstants.STANDARD_USER, AppConstants.STANDARD_PASSWORD)
 
         # Add product to the cart
         self.plp_page.add_product_to_cart()
         logger.info("Product added to cart.")
 
+        # Get the cart count and assert it
+        cart_count = self.plp_page.get_cart_count()
+        logger.info(f"Retrieved cart count: {cart_count}")
+
+        # Assert that the cart count is as expected
+        assert cart_count == "1", f"Expected cart count to be '1', but got '{cart_count}'."
+        logger.info("Test completed successfully. Product added to cart.")
+
+    def test_drag_product_into_cart(self):
+        logger.info("Starting test: test_drag_product_into_cart")
+
+        # Perform login
+        self.login_page.do_login(AppConstants.STANDARD_USER, AppConstants.STANDARD_PASSWORD)
+
+        # Add product to the cart by dragging the product and dropping to cart
+        self.plp_page.add_product_by_dragging_to_cart()
         # Get the cart count and assert it
         cart_count = self.plp_page.get_cart_count()
         logger.info(f"Retrieved cart count: {cart_count}")

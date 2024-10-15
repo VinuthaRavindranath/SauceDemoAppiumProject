@@ -4,6 +4,7 @@ from pages import (
     SauceDemoLoginPage,
     SauceDemoPlpPage
 )
+from constants import AppConstants
 
 
 class TestLogin:
@@ -20,10 +21,10 @@ class TestLogin:
         logger.info("Starting test: test_login")
 
         # Enter username
-        self.login_page.enter_username()
+        self.login_page.enter_username(AppConstants.STANDARD_USER)
 
         # Enter password
-        self.login_page.enter_password()
+        self.login_page.enter_password(AppConstants.STANDARD_PASSWORD)
 
         # Click the login button
         self.login_page.click_on_login_button()
