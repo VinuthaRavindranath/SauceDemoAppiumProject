@@ -33,5 +33,5 @@ class SauceDemoCheckoutPage(ElementUtil):
 
     def click_on_finish_button(self):
         resource_id_to_scroll_to = "test-FINISH"
-        element = self.scroll_to_element(resource_id_to_scroll_to)
+        element = self.scroll_to_element(resource_id_to_scroll_to,"description")
         element.click()

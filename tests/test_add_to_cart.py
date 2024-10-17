@@ -1,10 +1,8 @@
-import time
-
 import pytest
 from conftest import appium_driver, logger
 from pages import (
     SauceDemoLoginPage,
-    SauceDemoPlpPage
+    SauceDemoPlpPage, SauceDemoCartPage
 )
 from constants import AppConstants
 
@@ -17,6 +15,7 @@ class TestAddToCart:
         logger.info("Initializing page objects for the test.")
         self.login_page = SauceDemoLoginPage(appium_driver)
         self.plp_page = SauceDemoPlpPage(appium_driver)
+        self.cart_page=SauceDemoCartPage(appium_driver)
 
     def test_add_to_cart(self):
         """Test the functionality of adding a product to the cart."""
@@ -52,3 +51,21 @@ class TestAddToCart:
         # Assert that the cart count is as expected
         assert cart_count == "1", f"Expected cart count to be '1', but got '{cart_count}'."
         logger.info("Test completed successfully. Product added to cart.")
+
+    def test_swipe_to_remove_product_from_cart(self):
+        logger.info("Starting test: test_drag_product_into_cart")
+
+        # Perform login
+        self.login_page.do_login(AppConstants.STANDARD_USER, AppConstants.STANDARD_PASSWORD)
+
+        # Add product to the cart by dragging the product and dropping to cart
+        self.plp_page.add_multiple_products_to_cart()
+        self.plp_page.click_on_mini_cart()
+        self.cart_page.swipe_to_remove()
+        cart_count = self.plp_page.get_cart_count()
+        assert cart_count == "1", f"Expected cart count to be '1', but got '{cart_count}'."
+        logger.info("Test completed successfully. Product deleted from cart using swipe")
+
+
+
+

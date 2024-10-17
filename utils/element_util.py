@@ -15,12 +15,6 @@ logging.basicConfig(level=logging.INFO)
 Locator = Tuple[AppiumBy, str]
 
 
-#
-# class ElementNotFoundException(Exception):
-#     """Custom exception for element not found scenarios."""
-#     pass
-
-
 class ElementUtil:
     """
     Utility class for handling common operations on elements in mobile automation using Appium.
@@ -173,14 +167,14 @@ class ElementUtil:
         except Exception as e:
             print(f"Error while scrolling: {e}")
 
-    def scroll_to_element(self, element, max_attempts=10):
+    def scroll_to_element(self, element,ele_tag, max_attempts=10):
         """Scroll to an element using UIAutomator and return the element."""
         attempts = 0
         while attempts < max_attempts:
             try:
-                # Attempt to find the element by content description
+                # Attempt to find the element by content
                 found_element = self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,
-                                                         f'new UiSelector().description("{element}")')
+                                                         f'new UiSelector().{ele_tag}("{element}")')
                 return found_element  # Return the found element
             except NoSuchElementException:
                 # If not found, scroll and increment attempts
@@ -189,7 +183,7 @@ class ElementUtil:
                 time.sleep(0.5)  # Wait for the UI to settle
                 attempts += 1
 
-        raise Exception(f"Element with description '{element}' not found after {max_attempts} attempts.")
+        raise Exception(f"Element with {ele_tag} '{element}' not found after {max_attempts} attempts.")
 
     # --- Gesture Methods ---
 
@@ -219,68 +213,9 @@ class ElementUtil:
         self.driver.execute_script("mobile: longPress", {"element": element.id})
         logging.info("Long pressed on the element.")
 
-    def swipe(self, start_x, start_y, end_x, end_y, duration=1000):
-        """
-        Swipes from a starting point to an ending point.
 
-        Args:
-            start_x (int): The x-coordinate of the starting point.
-            start_y (int): The y-coordinate of the starting point.
-            end_x (int): The x-coordinate of the ending point.
-            end_y (int): The y-coordinate of the ending point.
-            duration (int): The duration of the swipe in milliseconds (default is 1000).
 
-        Returns:
-            None
-        """
-        self.driver.execute_script('mobile: swipe', {
-            'startX': start_x,
-            'startY': start_y,
-            'endX': end_x,
-            'endY': end_y,
-            'duration': duration
-        })
-        logging.info(f"Swiped from ({start_x}, {start_y}) to ({end_x}, {end_y}).")
 
-    def drag_and_drop(self, source_locator: Locator, target_locator: Locator):
-        """
-        Drags a source element and drops it on a target element.
-
-        Args:
-            source_locator (Locator): The locator for the web element to drag.
-            target_locator (Locator): The locator for the web element to drop onto.
-
-        Returns:
-            None
-        """
-        try:
-            source_element = self.find_element(source_locator)
-            target_element = self.find_element(target_locator)
-
-            # Create an ActionChain object
-            actions = ActionChains(self.driver)
-
-            # Perform drag and drop
-            actions.drag_and_drop(source_element, target_element).perform()
-
-            logging.info(f"Dragged element {source_locator} and dropped onto {target_locator}.")
-
-        except Exception as e:
-            logging.error(f"Error during drag and drop: {e}")
-            raise  # Rethrow the exception if needed
-
-    def pinch(self, element):
-        """
-        Performs a pinch gesture on a specified element.
-
-        Args:
-            element (WebElement): The web element to pinch.
-
-        Returns:
-            None
-        """
-        self.driver.execute_script('mobile: pinch', {'element': element.id})
-        logging.info("Performed pinch action.")
 
     def zoom(self, element):
         """
@@ -401,3 +336,31 @@ class ElementUtil:
                 break
         else:
             logging.warning("No web context available to switch to.")
+
+    def pinch_and_zoom(self, locator: Locator):
+        time.sleep(5)
+
+        product_image = self.driver.find_element(*locator)
+
+        self.driver.execute_script('mobile: pinchCloseGesture', {
+            'element': product_image.id,
+            'percent': 200,  # The amount of zoom in, can be adjusted
+            'speed': 500})
+        time.sleep(5)
+
+    def wait_for_invisibility_of_element(self, by, value):
+        """
+        Waits for the presence of a specific element on the page.
+
+        Args:
+            by (str): The method to locate elements (e.g., AppiumBy.ID).
+            value (str): The locator value for the element.
+
+        Returns:
+            None: This method does not return a value.
+
+        Raises:
+            TimeoutException: If the element is not found within the default timeout (10 seconds).
+        """
+        logging.info(f"Waiting for presence of element: {value}")
+        WebDriverWait(self.driver, 10).until(EC.invisibility_of_element((by, value)))

@@ -1,6 +1,14 @@
+import time
+
 from appium.webdriver.common.appiumby import AppiumBy
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+from constants import AppConstants
 from utils.element_util import ElementUtil
 import logging
+
+from utils.gestures_util import GesturesUtil
 
 # Set up logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -10,6 +18,9 @@ class SauceDemoPlpPage(ElementUtil):
 
     def __init__(self, driver):
         super().__init__(driver)
+        # Initialize GesturesUtil
+        self.gesture_util = GesturesUtil(driver)
+
         # Element locators
         self.first_product_on_plp = (
             AppiumBy.XPATH, "(//android.view.ViewGroup[@content-desc='test-Item'])[1]/android.view.ViewGroup")
@@ -21,6 +32,8 @@ class SauceDemoPlpPage(ElementUtil):
         self.burger_menu = (AppiumBy.XPATH,
                             "//android.view.ViewGroup[@content-desc='test-Menu']/android.view.ViewGroup/android.widget.ImageView")
         self.logout_button = (AppiumBy.ACCESSIBILITY_ID, "test-LOGOUT")
+        self.first_product= (AppiumBy.XPATH,"//android.widget.TextView[@content-desc='test-Item title' and @text='Sauce Labs Backpack']")
+
 
     def validate_presence_of_first_product(self):
         """
@@ -68,9 +81,20 @@ class SauceDemoPlpPage(ElementUtil):
 
     def add_product_by_dragging_to_cart(self):
         self.wait_for_element(*self.add_to_cart_drag_zone)
-        self.drag_and_drop(self.add_to_cart_drag_zone, self.add_to_cart_drop_zone)
+        # Use the gestures_util instance to perform the drag and drop
+        self.gesture_util.drag_and_drop(self.add_to_cart_drag_zone, self.add_to_cart_drop_zone)
 
     def do_logout(self):
         self.click_on_element(self.burger_menu)
         self.wait_for_element(*self.logout_button)
         self.click_on_element(self.logout_button)
+
+    def add_multiple_products_to_cart(self):
+        self.click_on_element(self.add_to_cart)
+        resource_id_to_scroll="Sauce Labs Bolt T-Shirt"
+        self.scroll_to_element(resource_id_to_scroll,"text")
+        self.click_on_element(self.add_to_cart)
+
+    def click_on_first_product(self):
+        self.wait_for_element(*self.first_product)
+        self.click_on_element(self.first_product)
