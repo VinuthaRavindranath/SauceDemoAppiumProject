@@ -78,3 +78,129 @@ class GesturesUtil():
             .move_by_offset(-width // 4, 0) \
             .release() \
             .perform()
+
+    def pinch(self, locator: Locator, duration: int = 1000, zoom_out: bool = True):
+        element = self.element_util.find_element(locator)
+
+        # Get element's position and size
+        rect = element.rect
+        center_x = rect['x'] + rect['width'] // 2
+        center_y = rect['y'] + rect['height'] // 2
+
+        # Define starting positions for two fingers
+        offset = 100  # Adjust as needed
+        start_finger1 = (center_x - offset, center_y)
+        start_finger2 = (center_x + offset, center_y)
+
+        # Create action chains for both fingers
+        actions = ActionChains(self.driver)
+
+        if zoom_out:
+            # Pinch out (zoom out)
+            actions \
+                .move_to_element_with_offset(element, start_finger1[0], start_finger1[1]) \
+                .click_and_hold() \
+                .pause(duration / 2000) \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .release()
+
+            actions \
+                .move_to_element_with_offset(element, start_finger2[0], start_finger2[1]) \
+                .click_and_hold() \
+                .pause(duration / 2000) \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .release()
+        else:
+            # Pinch in (zoom in)
+            actions \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .click_and_hold() \
+                .pause(duration / 2000) \
+                .move_to_element_with_offset(element, start_finger1[0], start_finger1[1]) \
+                .release()
+
+            actions \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .click_and_hold() \
+                .pause(duration / 2000) \
+                .move_to_element_with_offset(element, start_finger2[0], start_finger2[1]) \
+                .release()
+
+        # Perform the gesture
+        actions.perform()
+
+    def tap(self, locator):
+        element = self.driver.find_element(*locator)
+        # Tap on the center of the element
+        actions = ActionChains(self.driver)
+        center_x = element.rect['x'] + element.rect['width'] // 2
+        center_y = element.rect['y'] + element.rect['height'] // 2
+
+        print(f"Tapping on element at ({center_x}, {center_y})")
+        actions \
+            .move_to_element_with_offset(element, center_x, center_y) \
+            .click() \
+            .perform()
+
+    def zoom(self, locator, zoom_in=True, duration=2000):  # Increased duration
+        """
+        This piece of code is not working as expected
+        Its work in progress
+        """
+        element = self.driver.find_element(*locator)
+
+        # Get the center of the element
+        rect = element.rect
+        center_x = rect['x'] + rect['width'] // 2
+        center_y = rect['y'] + rect['height'] // 2
+
+        # Define offsets for the pinch gesture
+        offset = 150  # Increased offset
+
+        print(f"Element Rect: {rect}")  # Log the element's rectangle
+        print(f"Zoom Center: ({center_x}, {center_y})")
+
+        actions = ActionChains(self.driver)
+
+        if zoom_in:
+            # Pinch in (zoom in)
+            finger1_start = (center_x - offset, center_y)
+            finger2_start = (center_x + offset, center_y)
+            print(f"Zooming in: Finger 1 starts at {finger1_start}, Finger 2 starts at {finger2_start}")
+
+            actions \
+                .move_to_element_with_offset(element, finger1_start[0], finger1_start[1]) \
+                .click_and_hold() \
+                .pause(duration / 1000) \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .release()
+
+            actions \
+                .move_to_element_with_offset(element, finger2_start[0], finger2_start[1]) \
+                .click_and_hold() \
+                .pause(duration / 1000) \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .release()
+        else:
+            # Pinch out (zoom out)
+            print(
+                f"Zooming out: Finger 1 starts at ({center_x}, {center_y}), Finger 2 starts at ({center_x}, {center_y})")
+
+            actions \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .click_and_hold() \
+                .pause(duration / 1000) \
+                .move_to_element_with_offset(element, center_x - offset, center_y) \
+                .release()
+
+            actions \
+                .move_to_element_with_offset(element, center_x, center_y) \
+                .click_and_hold() \
+                .pause(duration / 1000) \
+                .move_to_element_with_offset(element, center_x + offset, center_y) \
+                .release()
+
+        # Perform the actions
+        actions.perform()
+        print("Zoom action performed.")
+        time.sleep(1)  # Optional: pause to observe the effect

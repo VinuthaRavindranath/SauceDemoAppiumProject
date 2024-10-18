@@ -20,7 +20,8 @@ class SauceDemoPdpPage(ElementUtil):
         # Element locators
         self.product_image = (AppiumBy.XPATH, "//android.view.ViewGroup[@content-desc='test-Image Container']/android.widget.ImageView")
 
-    # def zoom_product_image(self):
-    #     self.wait_for_element(*self.product_image)
-    #     self.gesture_util.pinch(self.product_image)
-    #     time.sleep(3)
+    def zoom_in_and_zoom_out_image(self):
+        self.wait_for_element(*self.product_image)
+        self.gesture_util.tap(self.product_image)
+        self.gesture_util.zoom(self.product_image,zoom_in=False)
+        time.sleep(3)

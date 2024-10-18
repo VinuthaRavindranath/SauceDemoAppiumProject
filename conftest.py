@@ -1,8 +1,10 @@
+import allure
 import pytest
 import logging
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 from selenium.common.exceptions import InvalidSessionIdException
+from allure_commons.types import AttachmentType
 
 # Set up logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -26,7 +28,7 @@ def appium_driver():
 
     appium_server_url = 'http://localhost:4723/wd/hub'
     options = UiAutomator2Options().load_capabilities(capabilities)
-
+    global driver
     try:
         driver = webdriver.Remote(command_executor=appium_server_url, options=options)
         logger.info("Appium driver initialized successfully.")
@@ -46,3 +48,22 @@ def appium_driver():
             logger.warning("Attempted to quit an already terminated session.")
         except Exception as e:
             logger.error(f"Error while quitting Appium driver: {e}")
+
+@pytest.fixture
+def log_on_failure(request):
+    """
+    To capture the screenshot of failed tests
+    With the help of allure attach() to attach the screenshot in the report
+    """
+    yield
+    item = request.node
+    if item.rep_call.failed:
+        allure.attach(driver.get_screenshot_as_png(), name="failed_test", attachment_type=AttachmentType.PNG)
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, "rep_" + rep.when, rep)
+    return rep

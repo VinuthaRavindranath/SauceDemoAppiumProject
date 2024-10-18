@@ -16,6 +16,7 @@ class TestLogin:
         self.login_page = SauceDemoLoginPage(appium_driver)
         self.plp_page = SauceDemoPlpPage(appium_driver)
 
+    @pytest.mark.usefixtures("appium_driver", "log_on_failure")
     def test_login(self):
         """Test the login functionality of the Sauce Labs app."""
         logger.info("Starting test: test_login")

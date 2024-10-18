@@ -24,6 +24,7 @@ class TestCheckout:
         self.checkout_page = SauceDemoCheckoutPage(appium_driver)
         self.order_confirmation_page = SauceDemoOrderConfirmationPage(appium_driver)
 
+    @pytest.mark.usefixtures("appium_driver", "log_on_failure")
     def test_checkout(self):
         """Test the functionality of adding a product to the cart and completing the checkout process."""
         logger.info("Starting test: test_checkout")

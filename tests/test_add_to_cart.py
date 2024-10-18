@@ -17,6 +17,7 @@ class TestAddToCart:
         self.plp_page = SauceDemoPlpPage(appium_driver)
         self.cart_page=SauceDemoCartPage(appium_driver)
 
+    @pytest.mark.usefixtures("appium_driver", "log_on_failure")
     def test_add_to_cart(self):
         """Test the functionality of adding a product to the cart."""
         logger.info("Starting test: test_add_to_cart")
@@ -36,6 +37,7 @@ class TestAddToCart:
         assert cart_count == "1", f"Expected cart count to be '1', but got '{cart_count}'."
         logger.info("Test completed successfully. Product added to cart.")
 
+    @pytest.mark.usefixtures("appium_driver", "log_on_failure")
     def test_drag_product_into_cart(self):
         logger.info("Starting test: test_drag_product_into_cart")
 
@@ -52,13 +54,14 @@ class TestAddToCart:
         assert cart_count == "1", f"Expected cart count to be '1', but got '{cart_count}'."
         logger.info("Test completed successfully. Product added to cart.")
 
+    @pytest.mark.usefixtures("appium_driver", "log_on_failure")
     def test_swipe_to_remove_product_from_cart(self):
         logger.info("Starting test: test_drag_product_into_cart")
 
         # Perform login
         self.login_page.do_login(AppConstants.STANDARD_USER, AppConstants.STANDARD_PASSWORD)
 
-        # Add product to the cart by dragging the product and dropping to cart
+        # Add multiple products to the cart
         self.plp_page.add_multiple_products_to_cart()
         self.plp_page.click_on_mini_cart()
         self.cart_page.swipe_to_remove()
